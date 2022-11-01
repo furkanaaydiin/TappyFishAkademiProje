@@ -7,15 +7,15 @@ using UnityEngine;
 public class LeftMovement : MonoBehaviour
 {
 
-    public float speed;
+     public float speed;
 
-    private BoxCollider2D box;
+     private BoxCollider2D box;
 
-    private float obstableWidth;
+     private float obstableWidth;
 
-   float graundWiht;
-    
-    void Start()
+     private float graundWiht;
+
+     protected virtual void Start()
     {
         if(gameObject.CompareTag("Ground"))
         {
@@ -26,12 +26,16 @@ public class LeftMovement : MonoBehaviour
         {
             obstableWidth = GameObject.FindGameObjectWithTag("colon").GetComponent<BoxCollider2D>().size.x;
         }
-
+        
+     
         
         
-       
     }
-
+    
+    
+    
+    
+    
     
     void Update()
     {
@@ -50,7 +54,7 @@ public class LeftMovement : MonoBehaviour
         }
         else if (gameObject.CompareTag("Obstacle"))
         {
-            if (transform.position.x < GameManager.buttonLeft.x- obstableWidth)
+            if (transform.position.x < GameManager.buttonLeft.x - obstableWidth)
             {
                 Destroy(gameObject);
             }

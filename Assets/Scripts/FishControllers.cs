@@ -16,22 +16,29 @@ public class FishControllers : MonoBehaviour
     public Sprite fishDied;
     private SpriteRenderer sp;
     private Animator anim;
+    [SerializeField] private AudioSource swim, hit, point;
+   
     
     
-    public Skor skor;
+    public Skor skor;   //değişecek
     public GameManager _gamemeneger;
+    public ObstacleSpawner obstacleSpawner;
+
+
+    public UIAnimation uıAnimation;
     
     
     
 
-    void Start()
+   private void Start()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
+        _rigidbody2D.gravityScale = 0;
         sp = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
     }
 
-    void Update()
+   private void Update()
     { 
         FishSwim();
         
@@ -43,16 +50,32 @@ public class FishControllers : MonoBehaviour
     }
 
 
-    void FishSwim()
+   private void FishSwim()
     {
-        if (Input.GetMouseButtonDown(0) && GameManager.gameOver == false)
+        if (Input.GetMouseButtonDown(0) && !GameManager.gameOver)
         {
-            _rigidbody2D.velocity = Vector2.zero;
-            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, speed);
+            uıAnimation.GetReadyAnim();
+            if (!GameManager.gameStared)
+            {
+                swim.Play();
+                _rigidbody2D.gravityScale = 4f;
+                _rigidbody2D.velocity = Vector2.zero;
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, speed);
+                obstacleSpawner.InstasiataObstable();
+                _gamemeneger.GameHasStared();
+                
+            }
+            else
+            {
+                swim.Play();
+                _rigidbody2D.velocity = Vector2.zero;
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, speed);
+            }
+            
         }
     }
 
-    void FishRotation()
+   private void FishRotation()
     {
         if (_rigidbody2D.velocity.y > 0)
         {
@@ -71,7 +94,7 @@ public class FishControllers : MonoBehaviour
             
         }
 
-        if (toucheGround == false)
+        if (!toucheGround)
         {
             transform.rotation = Quaternion.Euler(0,0,angle);
         }
@@ -84,11 +107,14 @@ public class FishControllers : MonoBehaviour
         if (col.CompareTag("Obstacle"))
         {
             skor.Scored();
+            point.Play();
         }
-        else if (col.CompareTag("colon"))
+        else if (col.CompareTag("colon") && !GameManager.gameOver)
         {
             //game over
             _gamemeneger.GameOver();
+            FinishDiedEffect();
+            
             
         }
     }
@@ -98,22 +124,31 @@ public class FishControllers : MonoBehaviour
     {
         if (col.gameObject.CompareTag("Ground"))
         {
-            if (GameManager.gameOver == false)
+            if (!GameManager.gameOver)
             {
                 //gameover
                 _gamemeneger.GameOver();
                 GameOver();
+                FinishDiedEffect();
+                
             }
             else
             {
                 //game over 
                 _gamemeneger.GameOver();
                 GameOver();
+               // FinishDiedEffect();
             }
         }
     }
 
-    void GameOver()
+   private void FinishDiedEffect()
+    {
+        
+        hit.Play();
+    }
+
+   private void GameOver()
     {
         toucheGround = true;
         transform.rotation = Quaternion.Euler(0, 0, -90);

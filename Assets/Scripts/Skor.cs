@@ -1,30 +1,54 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Skor : MonoBehaviour
 {
-    private int score;
+   
 
    [SerializeField] private Text scoreText;
+   [SerializeField] private Text panelScoreText;
+   [SerializeField] private Text panelHighScoreText;
+   
+   private int score;
+   private int highScore;
+
+   [SerializeField] private GameObject New;
     
-    // Start is called before the first frame update
+    
     void Start()
     {
         score = 0;
         scoreText.text = score.ToString();
+        panelScoreText.text = score.ToString();
+
+        highScore = PlayerPrefs.GetInt("highScore");
+        panelHighScoreText.text = highScore.ToString();
+
     }
 
     public void Scored()
     {
         score++;
         scoreText.text = score.ToString();
+        panelScoreText.text = score.ToString();
+
+        if (score > highScore)
+        {
+            highScore = score;
+            panelScoreText.text = highScore.ToString();
+            PlayerPrefs.SetInt("highScore",highScore);
+            New.SetActive(false);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public int GetScore()
     {
-        
+        return score;
     }
+
+   
+    
 }
